@@ -14,7 +14,7 @@
 
 #include <dxgidebug.h>
 #include <dxgi1_6.h>
-#include "d3d12.h"
+#include "packages/Microsoft.Direct3D.D3D12.1.4.9/build/native/include/d3d12.h"
 
 // デバイスの作成にlibを使用する
 #define USE_D3D12_STATIC_LIB
@@ -43,7 +43,7 @@ GetProcAddressは関数だけでなく変数のアドレスも返すようにな
 /**
  * @brief D3D12SDKVersion: アプリケーションが使用するAgilitySDKのD3D12Core.dllのSDKバージョン (2021/04/21現在は4) 
  *        バージョン情報: https://devblogs.microsoft.com/directx/directx12agility/
- * @note 4未満に設定するとデフォルトのD3D12Coreが呼び出されます。 現行バージョンの4より大きいとD3D12CreateDeviceが失敗します。
+ * @note 1または2であれば12_1機能レベルのデバイスが作成可能であることを確認しました。 現行バージョンの4より大きいとD3D12CreateDeviceが失敗します。
 */
 extern "C" _declspec(dllexport) extern const UINT D3D12SDKVersion = 4;
 
@@ -136,7 +136,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE    hInstance,
 
     #ifdef USE_D3D12_SKD_CONFIGURATION
         /*
-        D3D12SDKVersion 及び D3D12SDKPath を指定しなくても、
+        D3D12SDKVersion 及び D3D12SDKPath を定義しなくても、
         ID3D12SDKConfiguration::SetSDKVersionから利用バージョンとSDKパスを設定できます。
         */
 
