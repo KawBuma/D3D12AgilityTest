@@ -14,13 +14,13 @@
 
 #include <dxgidebug.h>
 #include <dxgi1_6.h>
-#include "packages/Microsoft.Direct3D.D3D12.1.4.9/build/native/include/d3d12.h"
+#include "packages/Microsoft.Direct3D.D3D12.1.4.9/build/native/include/d3d12.h" // <d3d12.h> でも構わない
 
 // デバイスの作成にlibを使用する
 #define USE_D3D12_STATIC_LIB
 
 // ID3D12SDKConfiguration::SetSDKVersionを利用してAgilitySDKを利用します。
-// D3D12SDKVersion,D3D12SDKPathを定義する必要はありません。 
+// D3D12SDKVersion,D3D12SDKPathを定義する必要はありません。
 //#define USE_D3D12_SKD_CONFIGURATION
 
 #pragma comment(lib, "dxgi.lib")
@@ -31,9 +31,9 @@
 #endif
 
 /*
-extern const で外部リンケージを持つ。
+波括弧なしの extern "C" を付与すると、暗黙的にストレージクラス指定子の extern が付与され、外部リンケージを持つようになります: https://en.cppreference.com/w/cpp/language/language_linkage#Notes
 D3D12SDKVersion と D3D12SDKPath を定義することでAgilitySDKが発動する。
-GetProcAddressは関数だけでなく変数のアドレスも返すようになっており、こちら側で定義した D3D12SDKVersion と D3D12SDKPath をd3d12.dllがGetProcAddressを介して取得しているようです。(関数でしか使ったことなくて失念してた)
+GetProcAddressは関数だけでなく変数のアドレスも返すようになっており、こちら側で定義した D3D12SDKVersion と D3D12SDKPath をd3d12.dllがGetProcAddressを介して取得しているようです。
 
 また、こちら側で定義していなければd3d12.dllがデフォルトの処理を行うという仕組み。
 */
@@ -41,18 +41,18 @@ GetProcAddressは関数だけでなく変数のアドレスも返すようにな
 #ifndef USE_D3D12_SKD_CONFIGURATION
 
 /**
- * @brief D3D12SDKVersion: アプリケーションが使用するAgilitySDKのD3D12Core.dllのSDKバージョン (2021/04/21現在は4) 
+ * @brief D3D12SDKVersion: アプリケーションが使用するAgilitySDKのD3D12Core.dllのSDKバージョン (2021/04/21現在は4)
  *        バージョン情報: https://devblogs.microsoft.com/directx/directx12agility/
  * @note 1または2であれば12_1機能レベルのデバイスが作成可能であることを確認しました。 現行バージョンの4より大きいとD3D12CreateDeviceが失敗します。
 */
-extern "C" _declspec(dllexport) extern const UINT D3D12SDKVersion = 4;
+extern "C" _declspec(dllexport) const UINT D3D12SDKVersion = 4;
 
 /**
- * @brief D3D12SDKPath: D3D12Core.dllのディレクトリを指定します。 
+ * @brief D3D12SDKPath: D3D12Core.dllのディレクトリを指定します。
  *        実行ファイル相対パスです。
  * @note utf8文字列の使用が必要です。 (c++20以降ではどのように管理するのだろうか)
 */
-extern "C" _declspec(dllexport) extern const char* D3D12SDKPath = u8".\\D3D12\\";
+extern "C" _declspec(dllexport) const char* D3D12SDKPath = u8".\\D3D12\\";
 
 #endif // !USE_D3D12_SKD_CONFIGURATION
 
@@ -107,11 +107,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE    hInstance,
             if (deb)
             {
                 debug_enabled = true;
-                deb->Release(); 
+                deb->Release();
                 deb = nullptr;
             }
         }
-    
+
     #ifndef USE_D3D12_STATIC_LIB
         HMODULE d3d12_module = LoadLibraryA("d3d12.dll");
         assert(d3d12_module);
@@ -129,7 +129,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE    hInstance,
             if (debug_controller)
             {
                 debug_controller->EnableDebugLayer();
-                debug_controller->Release(); 
+                debug_controller->Release();
                 debug_controller = nullptr;
             }
         }
@@ -166,7 +166,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE    hInstance,
             ID3D12Device* dev{};
             if (FAILED(D3D12CreateDevice(ada, D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&dev))))
                 HR(D3D12CreateDevice(ada, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&dev)));
-        
+
             dev->Release(); dev = nullptr;
             ada->Release(); ada = nullptr;
             fa->Release();  fa  = nullptr;
